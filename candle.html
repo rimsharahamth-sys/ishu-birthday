@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Happy Birthday Surprise</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            color: white;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        h1 { font-size: 2rem; }
+
+        .screen {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            padding: 20px;
+        }
+
+        #candleSection { display: flex; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 90%;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .btn {
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff9800, #ff4081);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .candle-title { margin-bottom: 40px; }
+
+        .candle {
+            position: relative;
+            width: 60px;
+            height: 200px;
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+
+        .flame {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: radial-gradient(circle, yellow 40%, orange 70%, red 100%);
+            border-radius: 50%;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        #birthdayMessage {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+                        url("images/image9.jpeg") center/cover no-repeat;
+        }
+
+        #birthdayMessage h1 {
+            font-size: 3rem;
+            text-shadow: 2px 2px 10px black;
+        }
+
+        #birthdayMessage p { font-size: 1.4rem; }
+
+        #memoriesScreen {
+            background: #000;
+            position: relative;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 95%;
+            max-width: 900px;
+            height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .slider-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            font-size: 24px;
+            padding: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #prevBtn { left: 10px; }
+        #nextBtn { right: 10px; }
+
+        .quote-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .quote-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .quote-content p {
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+
+        .close-quote {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #ff4081;
+            color: white;
+            cursor: pointer;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #ff4081;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5rem; }
+            #birthdayMessage h1 { font-size: 2rem; }
+            #birthdayMessage p { font-size: 1.1rem; }
+            .slider-container { height: 60vh; }
+        }
+
+        @media (max-width: 480px) {
+            .slider-container { height: 50vh; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Candle Screen -->
+<div id="candleSection" class="screen">
+    <div class="card">
+        <h1 class="candle-title">🎂 Blow the Candle</h1>
+        <div class="candle">
+            <div class="flame" id="flame"></div>
+        </div>
+        <button class="btn" onclick="startListening()">🎤 Start Blowing</button>
+    </div>
+</div>
+
+<!-- Birthday Screen -->
+<div id="birthdayMessage" class="screen">
+    <div class="card">
+        <h1>🎉 Happy Birthday Ishu! 🎂</h1>
+        <p>Wishing You Joy, Happiness, and Success! 💖</p>
+        <div class="btn-group">
+            <button class="btn" onclick="openMemories()">📸 Open Memories</button>
+            <button class="btn" onclick="restartCelebration()">🎂 Celebrate Again</button>
+        </div>
+    </div>
+</div>
+
+<!-- Memories Screen -->
+<div id="memoriesScreen" class="screen">
+    <button class="close-btn btn" onclick="closeMemories()">❌ Close</button>
+
+    <div class="slider-container">
+        <button id="prevBtn" class="nav-btn">⟨</button>
+        <img id="memoryImage" src="images/image1.jpeg" onclick="showQuote()">
+        <button id="nextBtn" class="nav-btn">⟩</button>
+    </div>
+</div>
+
+<!-- Quote Modal -->
+<div id="quoteModal" class="quote-modal">
+    <div class="quote-content">
+        <p id="memoryQuote"></p>
+        <button class="close-quote" onclick="closeQuote()">Close</button>
+    </div>
+</div>
+
+<!-- Audio -->
+<audio id="birthdaySong" src="music/song1.mpeg"></audio>
+<audio id="memoryAudio"></audio>
+
+<script>
+const birthdaySong = document.getElementById("birthdaySong");
+const memoryAudio = document.getElementById("memoryAudio");
+
+const images = [
+    "images/image1.jpeg",
+    "images/image3.jpeg",
+    "images/image2.jpeg",
+    "images/image4.jpeg",
+    "images/image5.jpeg",
+    "images/image7.jpeg",
+    "images/image6.jpg",
+    "images/image9.jpeg"
+];
+
+const quotes = [
+`🌺✨ 💖 “Ishu, ee saree lo nuvvu kanipisthunnadi oka apsara laanti andam.
+💫 Nee elegance, nee grace ee photo ki marinta andanni add chesayi.
+👗 Tradition ni style tho carry cheyadam ante idhe ani chupinche andam idi.
+🌟 Elaagey eppudu ilaane andamtho, confidence tho, happy ga shine avvu!” 💖✨ 🌺`,
+
+`🌊💙 ☀️ “Ishu, ee beach photo lo nuvvu waves madhya enjoy chesthunnappudu,
+😊 nee smile sea kanna kuda bright ga merusthundi.
+🐚 Ee samudram laanti visalamaina happiness tho,
+🌈 nee life eppudu shanthiga mariyu aanandamtho nindipovali!” ✨🌊`,
+
+`🌸✨ 👑 “Ishu, ee photo lo nuvvu elegance mariyu confidence ki perfect example laa kanipistunnav.
+💎 Nee andam lo simplicity, nee smile lo purity prathibimbisthunnayi.
+🌟 Nee presence oka shining star laa andarini inspire chesthundi.
+🎀 Nee kalalu anni nijamavvali, nee prayanam vijayalatho nindipovali!” 🌸✨`,
+
+`🌺👗 💫 “Ishu, ee photo lo nuvvu traditional elegance ki perfect definition laa merusthunnav.
+😊 Nee navvu lo unna andam, nee presence lo unna grace prathi okarini aakarshistundi.
+🌟 Ee halfsaree lo kanipinche aa confidence laage,
+💐 Nee jeevitham prema, santhosham, mariyu shubha avakasalatho nindipovali!” 🌺✨`,
+`💖🎓 📸 “Ishu, ee photo lo nenu lekapoyina,
+😊 nee aanandam choosthe naaku chala santhosham ga undi.
+🏫 College days lo ilaanti memories eppatiki marchipoleni amoolyamaina gurthulu.
+🌟 Nee jeevitham ilaanti happy moments tho eppudu nindipovali!” 💕`,
+
+`😂🌳 🎉 “Ishu, ee photo choosthe navvu apalekapothunnanu!
+🤣 Chettu midha padinattu unna ee moment mana craziest memory.
+😆 Life lo ilaanti funny incidents eppatiki unforgettable.
+🎊 Elaagey nee life eppudu laughter tho nindipovali!
+😄 Eppudu ilaane navvuthu, navvinchuthu undu!” 😂✨`,
+
+`👭📷 💞 “Ishu, ee college group photo lo kanipinchedi kevalam smiles kaadhu,
+🌟 oka unforgettable journey.
+📖 Prathi face oka memory, prathi smile oka story.
+✨ Aa madhya nuvvu merusthu, aa batch ki oka special spark ga nilichav.” 💫`,
+
+`👸👑 ✨ “Ishu, ee pic lo nuvvu queen laa kanipistunnav—
+💎 grace, elegance, mariyu dignity ki perfect example.
+🏰 Life ane kingdom lo nuvvu eppudu success mariyu happiness tho rule cheyyali!” 👑💖`
+];
+
+const music = [
+    "music/song2.mpeg",
+    "music/song3.mpeg",
+    "music/song4.mpeg",
+    "music/song5.mpeg",
+    "music/song6.mpeg",
+    "music/song7.mp4",
+    "music/song8.mpeg",
+    "music/song9.mpeg"
+];
+
+let index = 0;
+let autoSlideEnabled = false;
+
+/* Prevent Index Errors */
+const totalMemories = Math.min(images.length, quotes.length, music.length);
+
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.style.display = "none";
+    });
+    document.getElementById(id).style.display = "flex";
+}
+
+function updateMemory() {
+    if (totalMemories === 0) return;
+
+    const safeIndex = ((index % totalMemories) + totalMemories) % totalMemories;
+
+    document.getElementById("memoryImage").src = images[safeIndex];
+    document.getElementById("memoryQuote").textContent = quotes[safeIndex];
+
+    memoryAudio.pause();
+    memoryAudio.currentTime = 0;
+    memoryAudio.src = music[safeIndex];
+
+    if (autoSlideEnabled) {
+        memoryAudio.play().catch(() => {});
+    }
+}
+
+/* Auto Move to Next Memory When Song Ends */
+memoryAudio.addEventListener("ended", () => {
+    if (!autoSlideEnabled) return;
+    index = (index + 1) % totalMemories;
+    updateMemory();
+});
+
+/* Navigation Buttons */
+document.getElementById("nextBtn").onclick = () => {
+    index = (index + 1) % totalMemories;
+    updateMemory();
+};
+
+document.getElementById("prevBtn").onclick = () => {
+    index = (index - 1 + totalMemories) % totalMemories;
+    updateMemory();
+};
+
+function showQuote() {
+    document.getElementById("quoteModal").style.display = "flex";
+}
+
+function closeQuote() {
+    document.getElementById("quoteModal").style.display = "none";
+}
+
+function openMemories() {
+    birthdaySong.pause();
+    index = 0;
+    autoSlideEnabled = true;
+    showScreen("memoriesScreen");
+    updateMemory();
+}
+
+function closeMemories() {
+    autoSlideEnabled = false;
+    memoryAudio.pause();
+    showScreen("birthdayMessage");
+}
+
+function restartCelebration() {
+    autoSlideEnabled = false;
+    memoryAudio.pause();
+    birthdaySong.pause();
+    memoryAudio.currentTime = 0;
+    birthdaySong.currentTime = 0;
+    document.getElementById("flame").style.display = "block";
+    showScreen("candleSection");
+}
+
+async function startListening() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const microphone = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        microphone.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const flame = document.getElementById("flame");
+
+        function detectBlow() {
+            analyser.getByteFrequencyData(dataArray);
+            let volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+
+            if (volume > 50) {
+                flame.style.display = "none";
+                stream.getTracks().forEach(track => track.stop());
+                showBirthdayWish();
+            } else {
+                requestAnimationFrame(detectBlow);
+            }
+        }
+        detectBlow();
+    } catch {
+        alert("Microphone access denied!");
+    }
+}
+
+function showBirthdayWish() {
+    showScreen("birthdayMessage");
+    birthdaySong.play().catch(() => {});
+    confetti({
+        particleCount: 250,
+        spread: 130,
+        origin: { y: 0.6 }
+    });
+}
+
+showScreen("candleSection");
+</script>
+
+</body>
+</html>
