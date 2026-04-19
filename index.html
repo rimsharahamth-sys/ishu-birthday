@@ -1,31 +1,30 @@
-Here is a complete HTML document that creates an interactive birthday surprise with a mobile-friendly candle blowing feature, memory slideshow, and confetti celebration.
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>✨ Happy Birthday Ishu | Blow the Candle ✨</title>
+    <title>Happy Birthday Surprise</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
     <!-- Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
-            user-select: none; /* better mobile touch experience */
+            font-family: Arial, sans-serif;
         }
 
         body {
-            background: radial-gradient(circle at 20% 30%, #0a0f1e, #000000);
+            background: linear-gradient(135deg, #000000, #1a1a1a);
             color: white;
             overflow: hidden;
-            min-height: 100vh;
-            touch-action: pan-x pan-y; /* preserve gestures for slider */
+            text-align: center;
         }
 
-        /* screens */
+        h1 { font-size: 2rem; }
+
         .screen {
             display: none;
             justify-content: center;
@@ -34,595 +33,711 @@ Here is a complete HTML document that creates an interactive birthday surprise w
             height: 100vh;
             width: 100vw;
             padding: 20px;
-            position: relative;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
         }
 
-        #candleSection { display: flex; background: linear-gradient(145deg, #03050b, #0a0e1a); }
+        #candleSection { display: flex; }
+
         .card {
-            background: rgba(20, 25, 45, 0.75);
-            backdrop-filter: blur(16px);
-            border-radius: 48px;
-            padding: 30px 24px;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            padding: 30px;
             max-width: 90%;
-            width: 380px;
-            text-align: center;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.2);
-            animation: floatGlow 1.2s ease;
+            animation: fadeIn 1s ease-in-out;
         }
 
-        @keyframes floatGlow {
-            0% { opacity: 0; transform: translateY(30px) scale(0.96); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        h1 { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.3px; background: linear-gradient(135deg, #FFD966, #FFB347);
-        -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
-        .candle-title { margin-bottom: 20px; font-size: 1.8rem; }
-
-        /* candle + flame */
-        .candle-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 30px 0 20px;
-        }
-        .candle {
-            position: relative;
-            width: 70px;
-            height: 210px;
-            background: linear-gradient(120deg, #f9e45b, #f7c530, #f5b81b);
-            border-radius: 35px 35px 20px 20px;
-            box-shadow: 0 12px 18px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,200,0.8);
-            cursor: pointer;
-        }
-        .flame {
-            position: absolute;
-            top: -48px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
-            height: 52px;
-            background: radial-gradient(circle, #ffdd77 20%, #ff8c42 60%, #ff3c00 95%);
-            border-radius: 50% 50% 40% 40%;
-            filter: blur(0.6px);
-            box-shadow: 0 0 20px #ffaa33;
-            animation: flickerFlame 0.12s infinite alternate;
-        }
-        @keyframes flickerFlame {
-            0% { transform: translateX(-50%) scale(1); opacity: 0.95; box-shadow: 0 0 8px orange; }
-            100% { transform: translateX(-50%) scale(1.08); opacity: 1; box-shadow: 0 0 26px #ffaa33; }
-        }
-
-        /* blow meter visual */
-        .blow-meter {
-            background: #1e2a3a;
-            border-radius: 60px;
-            height: 12px;
-            width: 80%;
-            margin: 20px auto 12px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 4px #00000055;
-        }
-        .blow-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ffb347, #ff7043);
-            transition: width 0.08s linear;
-            border-radius: 60px;
-        }
-        .mic-feedback {
-            font-size: 0.75rem;
-            color: #ffd966;
-            background: #00000066;
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 40px;
-            margin-top: 8px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .btn {
-            margin-top: 18px;
-            padding: 14px 26px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 16px;
             border: none;
-            border-radius: 60px;
-            background: linear-gradient(95deg, #ff9a3c, #ff4d6d);
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff9800, #ff4081);
             color: white;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-            width: fit-content;
+            transition: 0.3s;
         }
-        .btn:active { transform: scale(0.96); }
+
+        .btn:hover { transform: scale(1.05); }
+
         .btn-group {
             display: flex;
-            gap: 16px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin: 25px 0 10px;
+            margin-top: 15px;
         }
 
-        /* birthday message screen */
+        .candle-title { margin-bottom: 40px; }
+
+        .candle {
+            position: relative;
+            width: 60px;
+            height: 200px;
+            background: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+            border-radius: 10px;
+            margin: 20px auto;
+        }
+
+        .flame {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: radial-gradient(circle, yellow 40%, orange 70%, red 100%);
+            border-radius: 50%;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
         #birthdayMessage {
-            background: linear-gradient(135deg, #1f0c2c, #1b1e2f);
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+                        url("images/image9.jpeg") center/cover no-repeat;
+        }
+
+        #birthdayMessage h1 {
+            font-size: 3rem;
+            text-shadow: 2px 2px 10px black;
+        }
+
+        #birthdayMessage p { font-size: 1.4rem; }
+
+        #memoriesScreen {
+            background: #000;
             position: relative;
         }
-        .birthday-card {
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(12px);
-            border-radius: 56px;
-            padding: 32px 24px;
-            border: 1px solid rgba(255,200,100,0.4);
-        }
-        #birthdayMessage h1 { font-size: 2.6rem; margin-bottom: 15px; }
-        #birthdayMessage p { font-size: 1.3rem; margin: 20px 0; font-weight: 400; }
 
-        /* memories slider */
-        #memoriesScreen {
-            background: #000000dd;
-            backdrop-filter: blur(10px);
-        }
         .slider-container {
             position: relative;
-            width: 92%;
-            max-width: 950px;
-            height: 68vh;
-            background: #121212;
-            border-radius: 38px;
+            width: 95%;
+            max-width: 900px;
+            height: 70vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 20px 35px black;
-            margin-top: 20px;
         }
+
         .slider-container img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            background: #030303;
-            transition: transform 0.2s;
+            background: #000;
+            border-radius: 10px;
+            cursor: pointer;
         }
+
         .nav-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.5);
             border: none;
-            color: gold;
-            font-size: 2rem;
-            padding: 8px 20px;
-            border-radius: 60px;
+            color: white;
+            font-size: 24px;
+            padding: 12px;
+            border-radius: 50%;
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            font-weight: bold;
-            z-index: 20;
         }
-        #prevBtn { left: 12px; }
-        #nextBtn { right: 12px; }
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #ff4d6d;
-            padding: 8px 20px;
-            font-size: 0.9rem;
-            border-radius: 40px;
-            z-index: 25;
-        }
+
+        #prevBtn { left: 10px; }
+        #nextBtn { right: 10px; }
+
         .quote-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-        }
-        .quote-content {
-            background: rgba(20, 20, 45, 0.96);
-            backdrop-filter: blur(20px);
-            padding: 28px;
-            border-radius: 42px;
-            max-width: 85%;
-            width: 360px;
-            text-align: center;
-            border: 1px solid #ffb347;
-        }
-        .quote-content p {
-            font-size: 1rem;
-            line-height: 1.55;
-            white-space: pre-line;
-            color: #fff2db;
-        }
-        .close-quote {
-            margin-top: 22px;
-            background: #ff8c42;
-            padding: 10px 24px;
-            border: none;
-            border-radius: 36px;
-            color: white;
-            font-weight: bold;
+            z-index: 100;
         }
 
-        @media (max-width: 650px) {
-            .card { width: 92%; padding: 24px 18px; }
-            .candle { width: 55px; height: 170px; }
-            .flame { width: 28px; height: 46px; top: -42px; }
-            #birthdayMessage h1 { font-size: 1.9rem; }
-            .slider-container { height: 55vh; }
-            .btn { padding: 12px 18px; font-size: 1rem; }
+        .quote-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            animation: fadeIn 0.4s ease-in-out;
         }
+
+        .quote-content p {
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+
+        .close-quote {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #ff4081;
+            color: white;
+            cursor: pointer;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: #ff4081;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5rem; }
+            #birthdayMessage h1 { font-size: 2rem; }
+            #birthdayMessage p { font-size: 1.1rem; }
+            .slider-container { height: 60vh; }
+        }
+
         @media (max-width: 480px) {
-            .slider-container { height: 48vh; }
-            .nav-btn { font-size: 1.5rem; padding: 5px 12px; }
+            .slider-container { height: 50vh; }
+            .card { padding: 20px; }
         }
     </style>
 </head>
 <body>
 
-<!-- 🕯️ CANDLE SCREEN (blow detection fixed for mobile) -->
+<!-- Candle Screen -->
 <div id="candleSection" class="screen">
     <div class="card">
-        <h1 class="candle-title">🎂 BLOW THE CANDLE 🎂</h1>
-        <div class="candle-wrapper">
-            <div class="candle">
-                <div class="flame" id="flame"></div>
-            </div>
+        <h1 class="candle-title">🎂 Blow the Candle</h1>
+        <div class="candle">
+            <div class="flame" id="flame"></div>
         </div>
-        <!-- live blow intensity meter for mobile feedback -->
-        <div class="blow-meter">
-            <div id="blowFillBar" class="blow-fill"></div>
-        </div>
-        <div id="micStatusMsg" class="mic-feedback">🎤 Tap "Start Blowing" & blow into mic</div>
-        <button class="btn" id="startBlowBtn">🎙️ Start Blowing</button>
-        <button class="btn" style="background:#2c3e66; margin-top:8px;" id="simulateBlowBtn">✨ Simulate Blow (test)</button>
+        <button class="btn" id="startBlowBtn">🎤 Start Blowing</button>
     </div>
 </div>
 
-<!-- 🎂 BIRTHDAY WISH SCREEN -->
+<!-- Birthday Screen -->
 <div id="birthdayMessage" class="screen">
-    <div class="card birthday-card">
-        <h1>🎉 HAPPY BIRTHDAY ISHU! 🎂</h1>
-        <p>💖 Wishing you infinite joy, sparkling smiles & every success! 💖<br>✨ You make life magical ✨</p>
+    <div class="card">
+        <h1>🎉 Happy Birthday Ishu! 🎂</h1>
+        <p>Wishing You Joy, Happiness, and Success! 💖</p>
         <div class="btn-group">
-            <button class="btn" onclick="openMemories()">📸 OPEN MEMORIES</button>
-            <button class="btn" onclick="restartCelebration()">🎂 CELEBRATE AGAIN</button>
+            <button class="btn" onclick="openMemories()">📸 Open Memories</button>
+            <button class="btn" onclick="restartCelebration()">🎂 Celebrate Again</button>
         </div>
     </div>
 </div>
 
-<!-- 📸 MEMORIES SLIDER -->
+<!-- Memories Screen -->
 <div id="memoriesScreen" class="screen">
-    <button class="close-btn btn" onclick="closeMemories()">❌ CLOSE</button>
+    <button class="close-btn btn" onclick="closeMemories()">❌ Close</button>
+
     <div class="slider-container">
         <button id="prevBtn" class="nav-btn">⟨</button>
-        <img id="memoryImage" src="images/image1.jpeg" alt="Memory" onclick="showQuote()">
+        <img id="memoryImage" src="images/image1.jpeg" onclick="showQuote()">
         <button id="nextBtn" class="nav-btn">⟩</button>
     </div>
 </div>
 
-<!-- 💬 QUOTE MODAL -->
+<!-- Quote Modal -->
 <div id="quoteModal" class="quote-modal">
     <div class="quote-content">
         <p id="memoryQuote"></p>
-        <button class="close-quote" onclick="closeQuote()">💖 CLOSE 💖</button>
+        <button class="close-quote" onclick="closeQuote()">Close</button>
     </div>
 </div>
 
-<!-- AUDIO ELEMENTS -->
-<audio id="birthdaySong" src="music/song1.mpeg" preload="auto"></audio>
-<audio id="memoryAudio" preload="auto"></audio>
+<!-- Audio -->
+<audio id="birthdaySong" src="music/song1.mpeg"></audio>
+<audio id="memoryAudio"></audio>
 
 <script>
-    // ----------------------------- GLOBALS -----------------------------
-    const birthdaySong = document.getElementById("birthdaySong");
-    const memoryAudio = document.getElementById("memoryAudio");
+const birthdaySong = document.getElementById("birthdaySong");
+const memoryAudio = document.getElementById("memoryAudio");
 
-    // Media resources arrays (same as original but robust)
-    const images = [
-        "images/image1.jpeg", "images/image3.jpeg", "images/image2.jpeg", "images/image4.jpeg",
-        "images/image5.jpeg", "images/image7.jpeg", "images/image6.jpg", "images/image9.jpeg"
-    ];
-    const quotes = [
-        `🌺✨💖 “Ishu, ee saree lo nuvvu apsara laanti andam. Nee elegance, nee grace ee photo ki marinta andanni add chesayi. 👗 Tradition ni style tho carry cheyadam ante idhe! 🌟 Elaagey eppudu ilaane andamtho, confidence tho happy ga shine avvu!” 💖✨`,
-        `🌊💙☀️ “Ishu, ee beach photo lo waves madhya enjoy chesthunnappudu, nee smile sea kanna kuda bright ga merusthundi. 🐚 Samudram laanti visalamaina happiness tho nee life shanthiga mariyu aanandamtho nindipovali!” ✨🌊`,
-        `🌸✨👑 “Ishu, ee photo lo elegance & confidence ki perfect example. Nee andam lo simplicity, nee smile lo purity. 🌟 Nee presence oka shining star laa andarini inspire chesthundi.” 🌸✨`,
-        `🌺👗💫 “Ishu, traditional elegance ki perfect definition laa merusthunnav. Nee navvu lo unna andam, nee presence lo unna grace prathi okarini aakristundi. 💐 Nee jeevitham prema, santhosham tho nindipovali!” 🌺✨`,
-        `💖🎓📸 “Ishu, ee photo lo nenu lekapoyina, nee aanandam choosthe naaku chala santhosham. 🏫 College days ilaanti memories eppatiki marchipoleni amoolyamaina gurthulu. 🌟 Nee life happy moments tho nindipovali!” 💕`,
-        `😂🌳🎉 “Ishu, ee photo choosthe navvu apalekapothunnanu! Chettu midha padinattu unna ee moment mana craziest memory. 😆 Life lo ilaanti funny incidents unforgettable. Elaagey nee life eppudu laughter tho nindipovali!” 😂✨`,
-        `👭📷💞 “Ishu, ee college group photo lo kanipinchedi kevalam smiles kaadhu, oka unforgettable journey. Prathi face oka memory, prathi smile oka story. Aa madhya nuvvu merusthu, aa batch ki oka special spark ga nilichav.” 💫`,
-        `👸👑✨ “Ishu, ee pic lo nuvvu queen laa kanipistunnav — grace, elegance, mariyu dignity ki perfect example. 🏰 Life ane kingdom lo nuvvu eppudu success & happiness tho rule cheyyali!” 👑💖`
-    ];
-    const music = [
-        "music/song2.mpeg", "music/song3.mpeg", "music/song4.mpeg", "music/song5.mpeg",
-        "music/song6.mpeg", "music/song7.mp4", "music/song8.mpeg", "music/song9.mpeg"
-    ];
+const images = [
+    "images/image1.jpeg",
+    "images/image3.jpeg",
+    "images/image2.jpeg",
+    "images/image4.jpeg",
+    "images/image5.jpeg",
+    "images/image7.jpeg",
+    "images/image6.jpg",
+    "images/image9.jpeg"
+];
 
-    let currentIndex = 0;
-    let autoSlideActive = false;
-    let currentStream = null;
-    let currentAudioContext = null;
-    let animationFrameId = null;
-    let isBlowDetectionActive = false;
+const quotes = [
+`🌺✨ 💖 “Ishu, ee saree lo nuvvu kanipisthunnadi oka apsara laanti andam.
+💫 Nee elegance, nee grace ee photo ki marinta andanni add chesayi.
+👗 Tradition ni style tho carry cheyadam ante idhe ani chupinche andam idi.
+🌟 Elaagey eppudu ilaane andamtho, confidence tho, happy ga shine avvu!” 💖✨ 🌺`,
 
-    const totalMemories = Math.min(images.length, quotes.length, music.length);
+`🌊💙 ☀️ “Ishu, ee beach photo lo nuvvu waves madhya enjoy chesthunnappudu,
+😊 nee smile sea kanna kuda bright ga merusthundi.
+🐚 Ee samudram laanti visalamaina happiness tho,
+🌈 nee life eppudu shanthiga mariyu aanandamtho nindipovali!” ✨🌊`,
 
-    // Helper: show screen by ID
-    function showScreen(id) {
-        document.querySelectorAll(".screen").forEach(screen => {
-            screen.style.display = "none";
-        });
-        document.getElementById(id).style.display = "flex";
-    }
+`🌸✨ 👑 “Ishu, ee photo lo nuvvu elegance mariyu confidence ki perfect example laa kanipistunnav.
+💎 Nee andam lo simplicity, nee smile lo purity prathibimbisthunnayi.
+🌟 Nee presence oka shining star laa andarini inspire chesthundi.
+🎀 Nee kalalu anni nijamavvali, nee prayanam vijayalatho nindipovali!” 🌸✨`,
 
-    // Update memory slider + music & quote
-    function updateMemoryDisplay() {
-        if (totalMemories === 0) return;
-        let safeIdx = ((currentIndex % totalMemories) + totalMemories) % totalMemories;
-        document.getElementById("memoryImage").src = images[safeIdx];
-        document.getElementById("memoryQuote").innerText = quotes[safeIdx];
-        if (autoSlideActive) {
-            memoryAudio.pause();
-            memoryAudio.currentTime = 0;
-            memoryAudio.src = music[safeIdx];
-            memoryAudio.play().catch(e => console.log("Audio autoplay blocked, tap needed", e));
-        } else {
-            memoryAudio.pause();
-            memoryAudio.src = music[safeIdx];
-        }
-    }
+`🌺👗 💫 “Ishu, ee photo lo nuvvu traditional elegance ki perfect definition laa merusthunnav.
+😊 Nee navvu lo unna andam, nee presence lo unna grace prathi okarini aakarshistundi.
+🌟 Ee halfsaree lo kanipinche aa confidence laage,
+💐 Nee jeevitham prema, santhosham, mariyu shubha avakasalatho nindipovali!” 🌺✨`,
+`💖🎓 📸 “Ishu, ee photo lo nenu lekapoyina,
+😊 nee aanandam choosthe naaku chala santhosham ga undi.
+🏫 College days lo ilaanti memories eppatiki marchipoleni amoolyamaina gurthulu.
+🌟 Nee jeevitham ilaanti happy moments tho eppudu nindipovali!” 💕`,
 
-    // memory audio ended => next auto slide
-    memoryAudio.addEventListener("ended", () => {
-        if (autoSlideActive && totalMemories > 0) {
-            currentIndex = (currentIndex + 1) % totalMemories;
-            updateMemoryDisplay();
-        }
+`😂🌳 🎉 “Ishu, ee photo choosthe navvu apalekapothunnanu!
+🤣 Chettu midha padinattu unna ee moment mana craziest memory.
+😆 Life lo ilaanti funny incidents eppatiki unforgettable.
+🎊 Elaagey nee life eppudu laughter tho nindipovali!
+😄 Eppudu ilaane navvuthu, navvinchuthu undu!” 😂✨`,
+
+`👭📷 💞 “Ishu, ee college group photo lo kanipinchedi kevalam smiles kaadhu,
+🌟 oka unforgettable journey.
+📖 Prathi face oka memory, prathi smile oka story.
+✨ Aa madhya nuvvu merusthu, aa batch ki oka special spark ga nilichav.” 💫`,
+
+`👸👑 ✨ “Ishu, ee pic lo nuvvu queen laa kanipistunnav—
+💎 grace, elegance, mariyu dignity ki perfect example.
+🏰 Life ane kingdom lo nuvvu eppudu success mariyu happiness tho rule cheyyali!” 👑💖`
+];
+
+const music = [
+    "music/song2.mpeg",
+    "music/song3.mpeg",
+    "music/song4.mpeg",
+    "music/song5.mpeg",
+    "music/song6.mpeg",
+    "music/song7.mp4",
+    "music/song8.mpeg",
+    "music/song9.mpeg"
+];
+
+let index = 0;
+let autoSlideEnabled = false;
+
+/* Prevent Index Errors */
+const totalMemories = Math.min(images.length, quotes.length, music.length);
+
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.style.display = "none";
     });
+    document.getElementById(id).style.display = "flex";
+}
 
-    // Navigation & quote modal
-    document.getElementById("nextBtn")?.addEventListener("click", () => {
-        if (totalMemories) currentIndex = (currentIndex + 1) % totalMemories;
-        updateMemoryDisplay();
-    });
-    document.getElementById("prevBtn")?.addEventListener("click", () => {
-        if (totalMemories) currentIndex = (currentIndex - 1 + totalMemories) % totalMemories;
-        updateMemoryDisplay();
-    });
+function updateMemory() {
+    if (totalMemories === 0) return;
 
-    function showQuote() {
-        document.getElementById("quoteModal").style.display = "flex";
+    const safeIndex = ((index % totalMemories) + totalMemories) % totalMemories;
+
+    document.getElementById("memoryImage").src = images[safeIndex];
+    document.getElementById("memoryQuote").textContent = quotes[safeIndex];
+
+    memoryAudio.pause();
+    memoryAudio.currentTime = 0;
+    memoryAudio.src = music[safeIndex];
+
+    if (autoSlideEnabled) {
+        memoryAudio.play().catch(() => {});
     }
-    function closeQuote() {
-        document.getElementById("quoteModal").style.display = "none";
+}
+
+/* Auto Move to Next Memory When Song Ends */
+memoryAudio.addEventListener("ended", () => {
+    if (!autoSlideEnabled) return;
+    index = (index + 1) % totalMemories;
+    updateMemory();
+});
+
+/* Navigation Buttons */
+document.getElementById("nextBtn").onclick = () => {
+    index = (index + 1) % totalMemories;
+    updateMemory();
+};
+
+document.getElementById("prevBtn").onclick = () => {
+    index = (index - 1 + totalMemories) % totalMemories;
+    updateMemory();
+};
+
+function showQuote() {
+    document.getElementById("quoteModal").style.display = "flex";
+}
+
+function closeQuote() {
+    document.getElementById("quoteModal").style.display = "none";
+}
+
+function openMemories() {
+    birthdaySong.pause();
+    index = 0;
+    autoSlideEnabled = true;
+    showScreen("memoriesScreen");
+    updateMemory();
+}
+
+function closeMemories() {
+    autoSlideEnabled = false;
+    memoryAudio.pause();
+    showScreen("birthdayMessage");
+}
+
+function restartCelebration() {
+    // Stop any ongoing microphone detection
+    if (window.activeBlowDetection) {
+        window.activeBlowDetection = false;
     }
-
-    function openMemories() {
-        birthdaySong.pause();
-        autoSlideActive = true;
-        currentIndex = 0;
-        showScreen("memoriesScreen");
-        updateMemoryDisplay();
+    if (window.currentMediaStream) {
+        window.currentMediaStream.getTracks().forEach(track => track.stop());
+        window.currentMediaStream = null;
     }
-    function closeMemories() {
-        autoSlideActive = false;
-        memoryAudio.pause();
-        showScreen("birthdayMessage");
+    if (window.currentAudioContext) {
+        window.currentAudioContext.close().catch(()=>{});
+        window.currentAudioContext = null;
     }
-
-    function restartCelebration() {
-        autoSlideActive = false;
-        memoryAudio.pause();
-        birthdaySong.pause();
-        if (currentStream) {
-            try { currentStream.getTracks().forEach(t => t.stop()); } catch(e) {}
-            currentStream = null;
-        }
-        if (currentAudioContext) {
-            currentAudioContext.close().catch(()=>{});
-            currentAudioContext = null;
-        }
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        isBlowDetectionActive = false;
-        // reset flame visible
-        const flameElem = document.getElementById("flame");
-        if (flameElem) flameElem.style.display = "block";
-        // reset blow meter bar
-        const fillBar = document.getElementById("blowFillBar");
-        if (fillBar) fillBar.style.width = "0%";
-        document.getElementById("micStatusMsg").innerHTML = "🎤 Tap 'Start Blowing' & blow into mic";
-        showScreen("candleSection");
-    }
-
-    // ----------------------------- BLOW DETECTION (FIXED FOR MOBILE) -----------------------------
-    async function startBlowDetection() {
-        // cleanup previous detection resources
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-            currentStream = null;
-        }
-        if (currentAudioContext) {
-            await currentAudioContext.close();
-            currentAudioContext = null;
-        }
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        isBlowDetectionActive = false;
-
-        const flame = document.getElementById("flame");
-        const blowFill = document.getElementById("blowFillBar");
-        const micMsg = document.getElementById("micStatusMsg");
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            currentStream = stream;
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            currentAudioContext = audioCtx;
-            const source = audioCtx.createMediaStreamSource(stream);
-            const analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 256;
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            source.connect(analyser);
-            
-            // IMPORTANT: resume AudioContext on mobile (must be after user gesture)
-            if (audioCtx.state === "suspended") {
-                await audioCtx.resume();
-            }
-            
-            micMsg.innerHTML = "🎙️ Listening... BLOW into microphone! 💨";
-            micMsg.style.color = "#ffd966";
-            isBlowDetectionActive = true;
-            
-            // dynamic threshold: blow detection when max volume > 75 (sensitive for mobile)
-            // also shows live meter
-            function detectBlowLoop() {
-                if (!isBlowDetectionActive || !currentAudioContext || currentAudioContext.state !== "running") {
-                    return;
-                }
-                analyser.getByteFrequencyData(dataArray);
-                let maxVolume = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                    if (dataArray[i] > maxVolume) maxVolume = dataArray[i];
-                }
-                // Normalize 0-255 to percentage for visual feedback
-                let percent = Math.min(100, (maxVolume / 255) * 100);
-                if (blowFill) blowFill.style.width = percent + "%";
-                
-                // BLOW THRESHOLD: 75 works perfectly on mobile (strong blow)
-                // On mobile, a moderate blow reaches 80-120 easily
-                const BLOW_THRESHOLD = 72;
-                if (maxVolume > BLOW_THRESHOLD && flame && flame.style.display !== "none") {
-                    // SUCCESSFUL BLOW!
-                    flame.style.display = "none";
-                    if (blowFill) blowFill.style.width = "100%";
-                    micMsg.innerHTML = "💨 Candle blown! 🎉 Happy Birthday! 💨";
-                    // stop all detection resources
-                    if (currentStream) {
-                        currentStream.getTracks().forEach(t => t.stop());
-                        currentStream = null;
-                    }
-                    if (currentAudioContext) {
-                        currentAudioContext.close().catch(()=>{});
-                        currentAudioContext = null;
-                    }
-                    isBlowDetectionActive = false;
-                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null;
-                    // Show birthday wish after short delay
-                    setTimeout(() => {
-                        showBirthdayWish();
-                    }, 120);
-                    return;
-                }
-                animationFrameId = requestAnimationFrame(detectBlowLoop);
-            }
-            detectBlowLoop();
-        } catch (err) {
-            console.error("Microphone error:", err);
-            micMsg.innerHTML = "❌ Microphone access denied. Please allow mic & try again!";
-            micMsg.style.color = "#ff8a8a";
-            alert("Microphone permission needed to blow the candle! Please allow access.");
-        }
-    }
-
-    function showBirthdayWish() {
-        // final celebration screen
-        showScreen("birthdayMessage");
-        birthdaySong.currentTime = 0;
-        birthdaySong.play().catch(e => console.log("song autoplay blocked", e));
-        // confetti rain!
-        canvasConfetti({ particleCount: 220, spread: 110, origin: { y: 0.6 }, startVelocity: 18, colors: ['#ffd966', '#ff9a3c', '#ff4d6d', '#f9e45b'] });
-        canvasConfetti({ particleCount: 90, spread: 60, origin: { y: 0.4, x: 0.3 }, startVelocity: 20 });
-        canvasConfetti({ particleCount: 90, spread: 60, origin: { y: 0.5, x: 0.7 }, startVelocity: 20 });
-        setTimeout(() => {
-            canvasConfetti({ particleCount: 300, spread: 100, origin: { y: 0.7 }, startVelocity: 12 });
-        }, 200);
-    }
-
-    // manual simulate blow (for testing or backup)
-    function simulateBlowFallback() {
-        const flame = document.getElementById("flame");
-        if (flame && flame.style.display !== "none") {
-            // stop any active detection to avoid conflict
-            if (currentStream) {
-                currentStream.getTracks().forEach(t => t.stop());
-                currentStream = null;
-            }
-            if (currentAudioContext) {
-                currentAudioContext.close().catch(()=>{});
-                currentAudioContext = null;
-            }
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-            isBlowDetectionActive = false;
-            flame.style.display = "none";
-            const fillBar = document.getElementById("blowFillBar");
-            if (fillBar) fillBar.style.width = "100%";
-            document.getElementById("micStatusMsg").innerHTML = "✨ Simulated blow! ✨";
-            setTimeout(() => {
-                showBirthdayWish();
-            }, 80);
-        } else {
-            // already blown
-            if(document.getElementById("flame")?.style.display === "none") {
-                showBirthdayWish();
-            }
-        }
-    }
-
-    // attach start button with full mobile cleanup
-    document.getElementById("startBlowBtn").addEventListener("click", async (e) => {
-        e.preventDefault();
-        // Reset flame visibility and meter before starting
-        const flameElem = document.getElementById("flame");
-        if (flameElem) flameElem.style.display = "block";
-        const fillBar = document.getElementById("blowFillBar");
-        if (fillBar) fillBar.style.width = "0%";
-        // kill any previous detection resources
-        if (currentStream) {
-            currentStream.getTracks().forEach(t => t.stop());
-            currentStream = null;
-        }
-        if (currentAudioContext) {
-            await currentAudioContext.close();
-            currentAudioContext = null;
-        }
-        if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        isBlowDetectionActive = false;
-        // start fresh detection
-        await startBlowDetection();
-    });
-
-    document.getElementById("simulateBlowBtn").addEventListener("click", () => {
-        simulateBlowFallback();
-    });
-
-    // additionally if user restarts everything works fine
-    window.restartCelebration = restartCelebration;
-    window.openMemories = openMemories;
-    window.closeMemories = closeMemories;
-    window.showQuote = showQuote;
-    window.closeQuote = closeQuote;
-
-    // Ensure initial screen candle and total memory index fix
+    autoSlideEnabled = false;
+    memoryAudio.pause();
+    birthdaySong.pause();
+    memoryAudio.currentTime = 0;
+    birthdaySong.currentTime = 0;
+    // Show flame again
+    const flameElem = document.getElementById("flame");
+    if (flameElem) flameElem.style.display = "block";
     showScreen("candleSection");
-    // Preload any memory index safe
-    currentIndex = 0;
-    if(totalMemories) updateMemoryDisplay();
+}
 
-    // Extra fix: on mobile Safari sometimes user interaction required for audio context; our button handles it
-    // Also protect slider touch interference
-    const sliderImg = document.getElementById("memoryImage");
-    if(sliderImg) {
-        sliderImg.addEventListener("touchstart", (e) => {
-            e.stopPropagation();
-            showQuote();
+// ========== IMPROVED MOBILE BLOW DETECTION ==========
+let blowDetectionActive = false;
+let animationFrameId = null;
+
+async function startListening() {
+    // Prevent multiple simultaneous detections
+    if (blowDetectionActive) {
+        return;
+    }
+    
+    // Cleanup previous detection resources if any
+    if (window.currentMediaStream) {
+        window.currentMediaStream.getTracks().forEach(track => track.stop());
+        window.currentMediaStream = null;
+    }
+    if (window.currentAudioContext) {
+        await window.currentAudioContext.close().catch(()=>{});
+        window.currentAudioContext = null;
+    }
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    
+    const flameElement = document.getElementById("flame");
+    // If flame already hidden, do nothing
+    if (!flameElement || flameElement.style.display === "none") {
+        return;
+    }
+    
+    try {
+        // Request microphone access (must be triggered by user click)
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        window.currentMediaStream = stream;
+        
+        // Create AudioContext - MUST be resumed on mobile after user gesture
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioCtx();
+        window.currentAudioContext = audioContext;
+        
+        // Create media stream source
+        const source = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 512;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        
+        source.connect(analyser);
+        
+        // Important: Resume audio context on mobile (must be done after user gesture)
+        // Since startListening is called from click, it's allowed
+        if (audioContext.state === "suspended") {
+            await audioContext.resume();
+        }
+        
+        blowDetectionActive = true;
+        
+        // Variables for robust blow detection
+        let blowTriggered = false;
+        let volumeHistory = []; // simple moving average for ambient noise
+        const HISTORY_SIZE = 10;
+        let stableSamplesCount = 0;
+        
+        function detectBlow() {
+            if (!blowDetectionActive || blowTriggered) return;
+            
+            // Get current volume level (average of frequency data)
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                sum += dataArray[i];
+            }
+            let avgVolume = sum / bufferLength;  // 0 - 255 range
+            
+            // Build ambient baseline (first 15 frames to avoid false positive)
+            if (volumeHistory.length < HISTORY_SIZE) {
+                volumeHistory.push(avgVolume);
+                animationFrameId = requestAnimationFrame(detectBlow);
+                return;
+            }
+            
+            // Calculate baseline ambient noise (median or average)
+            let baseline = volumeHistory.reduce((a,b) => a + b, 0) / volumeHistory.length;
+            // Update history sliding window
+            volumeHistory.shift();
+            volumeHistory.push(avgVolume);
+            
+            // MOBILE OPTIMIZED THRESHOLD: 
+            // On mobile, blow creates sharp volume spike. Threshold relative to baseline + absolute min
+            let dynamicThreshold = Math.max(baseline * 1.8, 28);
+            // Additional absolute threshold to avoid very low mic sensitivity
+            let absoluteMin = 30;
+            let finalThreshold = Math.min(dynamicThreshold, absoluteMin);
+            finalThreshold = Math.max(finalThreshold, 25); // never less than 25
+            
+            // Also check for sudden change: if current volume is > baseline + 25
+            let suddenRise = (avgVolume > baseline + 22);
+            
+            // Detect blow: either exceeds threshold or sudden rise
+            let isBlow = (avgVolume > finalThreshold) || suddenRise;
+            
+            // Extra safety: Also check if volume > 35 absolute (good for most mobile mics)
+            if (avgVolume > 38) isBlow = true;
+            
+            if (isBlow && !blowTriggered && stableSamplesCount > 5) {
+                blowTriggered = true;
+                blowDetectionActive = false;
+                
+                // Stop microphone tracks & close audio context
+                if (window.currentMediaStream) {
+                    window.currentMediaStream.getTracks().forEach(track => track.stop());
+                    window.currentMediaStream = null;
+                }
+                if (window.currentAudioContext) {
+                    window.currentAudioContext.close().catch(()=>{});
+                    window.currentAudioContext = null;
+                }
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+                
+                // Hide flame with smooth effect
+                if (flameElement) {
+                    flameElement.style.display = "none";
+                }
+                // Trigger birthday celebration
+                showBirthdayWish();
+                return;
+            }
+            
+            // Increase stable samples after initial baseline built
+            if (volumeHistory.length >= HISTORY_SIZE && stableSamplesCount < 10) {
+                stableSamplesCount++;
+            }
+            
+            animationFrameId = requestAnimationFrame(detectBlow);
+        }
+        
+        // Start detection loop
+        animationFrameId = requestAnimationFrame(detectBlow);
+        
+        // Safety timeout: auto-stop listening after 20 seconds to save battery
+        setTimeout(() => {
+            if (blowDetectionActive && !blowTriggered) {
+                blowDetectionActive = false;
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                if (window.currentMediaStream) {
+                    window.currentMediaStream.getTracks().forEach(track => track.stop());
+                    window.currentMediaStream = null;
+                }
+                if (window.currentAudioContext) {
+                    window.currentAudioContext.close().catch(()=>{});
+                    window.currentAudioContext = null;
+                }
+                // Optional: alert user? Not changing style, just reset button state.
+                const startBtn = document.getElementById("startBlowBtn");
+                if (startBtn) startBtn.style.opacity = "1";
+            }
+        }, 20000);
+        
+    } catch (err) {
+        console.error("Microphone error:", err);
+        alert("Microphone access is needed to blow the candle! Please allow permission and try again.");
+        blowDetectionActive = false;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    }
+}
+
+// Ensure birthday screen appears with confetti and song play (mobile friendly)
+let birthdayShownFlag = false;
+
+function showBirthdayWish() {
+    if (birthdayShownFlag) return;
+    birthdayShownFlag = true;
+    
+    // Switch to birthday screen
+    showScreen("birthdayMessage");
+    
+    // Play birthday song with robust handling for mobile autoplay policies
+    // Since this is triggered by blow detection (which originated from user click + mic permission), 
+    // many mobile browsers allow audio playback. We'll also add a small fallback if needed.
+    birthdaySong.play().catch(e => {
+        console.log("Auto-play blocked, but user can tap any button to play later");
+        // As per requirement style unchanged, we just let it be - but still confetti works.
+        // However, most mobiles will allow because the gesture chain is maintained through microphone permission click.
+        // If blocked, it won't break overall experience.
+    });
+    
+    // Enhanced confetti burst
+    canvasConfetti({ particleCount: 180, spread: 100, origin: { y: 0.6 }, startVelocity: 15 });
+    canvasConfetti({ particleCount: 100, spread: 70, origin: { y: 0.5, x: 0.2 }, startVelocity: 12 });
+    canvasConfetti({ particleCount: 100, spread: 70, origin: { y: 0.5, x: 0.8 }, startVelocity: 12 });
+    setTimeout(() => {
+        canvasConfetti({ particleCount: 300, spread: 130, origin: { y: 0.7 }, startVelocity: 18 });
+    }, 200);
+}
+
+// Override startListening binding with cleanup and reset birthday flag on restart
+const originalRestart = restartCelebration;
+window.restartCelebration = function() {
+    birthdayShownFlag = false;
+    blowDetectionActive = false;
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    if (window.currentMediaStream) {
+        window.currentMediaStream.getTracks().forEach(track => track.stop());
+        window.currentMediaStream = null;
+    }
+    if (window.currentAudioContext) {
+        window.currentAudioContext.close().catch(()=>{});
+        window.currentAudioContext = null;
+    }
+    autoSlideEnabled = false;
+    memoryAudio.pause();
+    birthdaySong.pause();
+    memoryAudio.currentTime = 0;
+    birthdaySong.currentTime = 0;
+    const flameElem = document.getElementById("flame");
+    if (flameElem) flameElem.style.display = "block";
+    showScreen("candleSection");
+    // Reset button state (visual only)
+    const blowBtn = document.getElementById("startBlowBtn");
+    if (blowBtn) blowBtn.disabled = false;
+};
+
+// Re-bind start listening to button and prevent double triggers
+document.addEventListener("DOMContentLoaded", () => {
+    const blowButton = document.getElementById("startBlowBtn");
+    if (blowButton) {
+        // Remove any previous listeners to avoid duplicate
+        const newBtn = blowButton.cloneNode(true);
+        blowButton.parentNode.replaceChild(newBtn, blowButton);
+        newBtn.id = "startBlowBtn";
+        newBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            // Disable button briefly to avoid multiple mic requests (but re-enable after some time or error)
+            newBtn.disabled = true;
+            newBtn.textContent = "🎤 Listening... Blow now!";
+            try {
+                await startListening();
+                // Auto reset button text after 4 seconds if not blown? we handle blow callback separately
+                setTimeout(() => {
+                    if (newBtn && !blowDetectionActive && document.getElementById("flame")?.style.display !== "none") {
+                        newBtn.disabled = false;
+                        newBtn.textContent = "🎤 Start Blowing";
+                    } else if (blowDetectionActive) {
+                        // still listening, keep text but no auto reset
+                    } else if (document.getElementById("flame")?.style.display === "none") {
+                        newBtn.disabled = true;
+                        newBtn.textContent = "🎤 Candle Blown!";
+                    } else {
+                        newBtn.disabled = false;
+                        newBtn.textContent = "🎤 Start Blowing";
+                    }
+                }, 5000);
+            } catch (err) {
+                newBtn.disabled = false;
+                newBtn.textContent = "🎤 Start Blowing";
+                alert("Could not access microphone. Please check permissions.");
+            }
         });
     }
-    // make sure memory close and navigation touch friendly
-    console.log("🎂 Ultimate Birthday Experience Loaded — Mobile Candle Blow Ready 🕯️");
+});
+
+// Also ensure when showBirthdayWish is triggered, we reset any ongoing detection and button states
+function showBirthdayWish() {
+    if (birthdayShownFlag) return;
+    birthdayShownFlag = true;
+    
+    // Cleanup any remaining detection loops
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+    blowDetectionActive = false;
+    if (window.currentMediaStream) {
+        window.currentMediaStream.getTracks().forEach(track => track.stop());
+        window.currentMediaStream = null;
+    }
+    if (window.currentAudioContext) {
+        window.currentAudioContext.close().catch(()=>{});
+        window.currentAudioContext = null;
+    }
+    
+    // Update button text if exists
+    const btn = document.getElementById("startBlowBtn");
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "🎂 Candle Blown!";
+    }
+    
+    showScreen("birthdayMessage");
+    birthdaySong.play().catch(e => console.log("Audio play:", e));
+    
+    canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, startVelocity: 16 });
+    canvasConfetti({ particleCount: 120, spread: 80, origin: { y: 0.5, x: 0.3 }, startVelocity: 14 });
+    canvasConfetti({ particleCount: 120, spread: 80, origin: { y: 0.5, x: 0.7 }, startVelocity: 14 });
+    setTimeout(() => {
+        canvasConfetti({ particleCount: 400, spread: 140, origin: { y: 0.7 }, startVelocity: 20 });
+    }, 250);
+}
+
+// Keep existing global functions and ensure they don't conflict
+window.openMemories = openMemories;
+window.closeMemories = closeMemories;
+window.restartCelebration = restartCelebration;
+window.showQuote = showQuote;
+window.closeQuote = closeQuote;
+
+// Initial screen show (candle section)
+showScreen("candleSection");
+// Reset flag on page load
+birthdayShownFlag = false;
+blowDetectionActive = false;
 </script>
+
 </body>
 </html>
-```
